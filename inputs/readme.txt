@@ -1,0 +1,1 @@
+Put the input files for the puzzles inside this folder.
