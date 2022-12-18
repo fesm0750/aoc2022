@@ -88,9 +88,7 @@ fn process_input(input: impl Iterator<Item = String>) -> Filesystem {
                 let mut name = name.to_string();
                 name.push_str(branch.last().unwrap());
 
-                let dir = filesystem
-                    .entry(name.clone())
-                    .or_insert(Item::new_dir(&name, branch.last().unwrap()));
+                let dir = filesystem.entry(name.clone()).or_insert(Item::new_dir(&name));
                 branch.push(dir.name.clone());
                 // println!("{:?}", branch);
             }
@@ -101,7 +99,7 @@ fn process_input(input: impl Iterator<Item = String>) -> Filesystem {
             (Some(size), Some(name), None) => {
                 // println!("{} {:?}", idx, branch);
                 let size = str::parse::<u32>(size).unwrap();
-                filesystem.insert(name.to_string(), Item::new_file(name, branch.last().unwrap(), size));
+                filesystem.insert(name.to_string(), Item::new_file(name, size));
 
                 branch
                     .iter()
@@ -125,7 +123,6 @@ struct Item {
     item_type: ItemType,
     name: String,
     size: u32,
-    parent: String,
 }
 
 impl Item {
@@ -134,25 +131,22 @@ impl Item {
             item_type: ItemType::Root,
             name: "/".to_owned(),
             size: 0,
-            parent: "".to_owned(),
         }
     }
 
-    fn new_dir(name: &str, parent: &str) -> Self {
+    fn new_dir(name: &str) -> Self {
         Self {
             item_type: ItemType::Dir,
             name: name.to_owned(),
             size: 0,
-            parent: parent.to_owned(),
         }
     }
 
-    fn new_file(name: &str, parent: &str, size: u32) -> Self {
+    fn new_file(name: &str, size: u32) -> Self {
         Self {
             item_type: ItemType::File,
             name: name.to_owned(),
             size,
-            parent: parent.to_owned(),
         }
     }
 }
